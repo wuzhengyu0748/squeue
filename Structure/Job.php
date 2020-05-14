@@ -8,6 +8,7 @@ class Job
     private $body;
     private $delay;
     private $ttr;
+    private $jobId;
 
     public function setTopic($value)
     {
@@ -47,6 +48,16 @@ class Job
     public function getTTR()
     {
         return $this->ttr;
+    }
+
+    public function setJobId($topic)
+    {
+        $this->jobId = self::generateJobId($topic);
+    }
+
+    public function getJobId()
+    {
+        return $this->jobId;
     }
 
     public static function generateJobId($topic)

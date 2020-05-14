@@ -25,12 +25,13 @@ class JobPool
         $jobPoolKey = self::getJobPoolKeyByTopic($topic);
 
         $job = new Job();
+        $job->setJobId($topic);
         $job->setTopic($topic);
         $job->setBody($body);
         $job->setDelay($delay);
         $job->setTTR($ttr);
 
-        $jobId = Job::generateJobId($topic);
+        $jobId = $job->getJobId();
         $serializeJob = serialize($job);
 
         if (!$driver->hSet($jobPoolKey, $jobId, $serializeJob)) {
@@ -87,9 +88,7 @@ class JobPool
      */
     private static function getJobPoolKeyByTopic($topic)
     {
-        $jobPoolKey = self::JOB_POOL_KEY_PREFIX . $topic;
-
-        return $jobPoolKey;
+        return self::JOB_POOL_KEY_PREFIX . $topic;
     }
 
     /**

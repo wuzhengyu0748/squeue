@@ -15,6 +15,7 @@ class ReadyQueue
      */
     public static function push($driver, $topic, $jobId)
     {
+        // todo 分布式锁
         $readyQueueKey = self::getReadyQueueKeyByTopic($topic);
 
         $driver->lpush($readyQueueKey, $jobId);

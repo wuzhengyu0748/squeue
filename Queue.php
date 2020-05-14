@@ -2,6 +2,7 @@
 
 namespace SQueue;
 
+use SQueue\Component\DelayBucket;
 use SQueue\Component\Driver;
 use SQueue\Component\JobPool;
 use SQueue\Component\ReadyQueue;
@@ -12,13 +13,26 @@ class Queue
 
     public function __construct($redisIp, $redisPort, $password = false)
     {
-        // 连接redis
         static::$driver = Driver::getInstance($redisIp, $redisPort, $password);
     }
 
     public function startManager()
     {
+        //todo 多进程 Timmer
+        $pool = new \Swoole\Process\Pool(1, SWOOLE_IPC_NONE, 0, true);
 
+        $pool->on('workerStart', function (\Swoole\Process\Pool $pool, int $workerId) {
+            echo "Worker#{$workerId} is started\n";
+            while (true) {
+                DelayBucket::scan(static::$driver);
+            }
+        });
+
+        $pool->on('workerStop', function (\Swoole\Process\Pool $pool, int $workerId) {
+            echo "Worker#{$workerId} is stop\n";
+        });
+
+        $pool->start();
     }
 
     /**
@@ -31,9 +45,17 @@ class Queue
      * @author wuzhengyu
      * @date 2020/5/13 0013 下午 3:34
      */
-    public function add($topic, $body, $delay = 300, $ttr = 60)
+    public function add($topic, $body, $delay = 0, $ttr = 60)
     {
-        return JobPool::addJob(static::$driver, $topic, $body, $delay, $ttr);
+        $jobId = JobPool::addJob(static::$driver, $topic, $body, $delay, $ttr);
+
+        if ($delay) {
+            DelayBucket::add(static::$driver, $jobId, $delay);
+        } else {
+            ReadyQueue::push(static::$driver, $topic, $jobId);
+        }
+
+        return $jobId;
     }
 
     /**
