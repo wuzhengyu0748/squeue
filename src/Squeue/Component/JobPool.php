@@ -1,8 +1,8 @@
 <?php
 
-namespace SQueue\Component;
+namespace Squeue\Component;
 
-use SQueue\Structure\Job;
+use Squeue\Structure\Job;
 
 class JobPool
 {

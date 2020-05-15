@@ -1,9 +1,9 @@
 <?php
 
-namespace SQueue\Component;
+namespace Squeue\Component;
 
-use SQueue\Library\Config;
-use SQueue\Library\Lock;
+use Squeue\Library\Config;
+use Squeue\Library\Lock;
 
 class DelayBucket
 {

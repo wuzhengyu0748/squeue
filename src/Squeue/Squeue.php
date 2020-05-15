@@ -1,12 +1,12 @@
 <?php
 
-namespace SQueue;
+namespace Squeue;
 
-use SQueue\Component\DelayBucket;
-use SQueue\Library\Config;
-use SQueue\Library\Redis;
-use SQueue\Component\JobPool;
-use SQueue\Component\ReadyQueue;
+use Squeue\Component\DelayBucket;
+use Squeue\Library\Config;
+use Squeue\Library\Redis;
+use Squeue\Component\JobPool;
+use Squeue\Component\ReadyQueue;
 
 class Squeue
 {

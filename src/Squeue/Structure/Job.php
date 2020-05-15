@@ -1,6 +1,6 @@
 <?php
 
-namespace SQueue\Structure;
+namespace Squeue\Structure;
 
 class Job
 {

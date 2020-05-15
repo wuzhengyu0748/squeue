@@ -1,0 +1,21 @@
+{
+    "name": "wuzhengyu0748/squeue",
+    "description": "php-delay-message-queue",
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "wuzhengyu",
+            "email": "xiaosilei@qq.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=7.0.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Squeue\\": "src/Squeue"
+        }
+    }
+}

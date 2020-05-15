@@ -1,6 +1,6 @@
 <?php
 
-namespace SQueue\Library;
+namespace Squeue\Library;
 
 class Config
 {
