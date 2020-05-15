@@ -80,7 +80,7 @@ class Squeue
      */
     public function pop($topic)
     {
-        ReadyQueue::pop(static::$driver, $topic);
+        return ReadyQueue::pop(static::$driver, $topic);
     }
 
     /**
