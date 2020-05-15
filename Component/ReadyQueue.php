@@ -2,6 +2,8 @@
 
 namespace SQueue\Component;
 
+use SQueue\Structure\Job;
+
 class ReadyQueue
 {
     const READY_QUEUE_KEY_PREFIX = 'SQueue:ReadyQueue:topic-';
@@ -15,7 +17,6 @@ class ReadyQueue
      */
     public static function push($driver, $topic, $jobId)
     {
-        // todo 分布式锁
         $readyQueueKey = self::getReadyQueueKeyByTopic($topic);
 
         $driver->lpush($readyQueueKey, $jobId);
@@ -25,18 +26,25 @@ class ReadyQueue
      * @param $driver
      * @param $topic
      * @return mixed|null
+     * @throws \Exception
      * @author wuzhengyu
-     * @date 2020/5/13 0013 下午 4:26
+     * @date 2020/5/14 0014 下午 2:14
      */
     public static function pop($driver, $topic)
     {
         $readyQueueKey = self::getReadyQueueKeyByTopic($topic);
 
         $jobId = $driver->rpop($readyQueueKey);
-        // todo 延迟队列加入
+
         $jobBody = JobPool::getJob($driver, $jobId);
 
-        return $jobBody ?? null;
+        if ($jobBody && $jobBody instanceof Job) {
+            DelayBucket::add($driver, $jobId, $jobBody->getTTR());
+        } else {
+            return null;
+        }
+
+        return $jobBody;
     }
 
     /**

@@ -1,8 +1,8 @@
 <?php
 
-namespace SQueue\Component;
+namespace SQueue\Library;
 
-class Driver
+class Redis
 {
     private static $_instance;
 
@@ -20,12 +20,15 @@ class Driver
      */
     public static function getInstance($ip, $port, $auth)
     {
+        \Co::set(['hook_flags' => SWOOLE_HOOK_TCP]);
+
         if (!(static::$_instance instanceof \Redis)) {
             static::$_instance = new \Redis();
             static::$_instance->connect($ip, $port);
             if ($auth) {
                 static::$_instance->auth($auth);
             }
+            static::$_instance->setOption(\Redis::OPT_READ_TIMEOUT, -1);
         }
 
         return static::$_instance;

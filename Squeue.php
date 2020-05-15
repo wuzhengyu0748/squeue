@@ -3,36 +3,38 @@
 namespace SQueue;
 
 use SQueue\Component\DelayBucket;
-use SQueue\Component\Driver;
+use SQueue\Library\Config;
+use SQueue\Library\Redis;
 use SQueue\Component\JobPool;
 use SQueue\Component\ReadyQueue;
 
-class Queue
+class Squeue
 {
     private static $driver;
 
     public function __construct($redisIp, $redisPort, $password = false)
     {
-        static::$driver = Driver::getInstance($redisIp, $redisPort, $password);
+        static::$driver = Redis::getInstance($redisIp, $redisPort, $password);
     }
 
-    public function startManager()
+    public function start()
     {
-        //todo 多进程 Timmer
-        $pool = new \Swoole\Process\Pool(1, SWOOLE_IPC_NONE, 0, true);
+        $process = new \Swoole\Process(function () {
 
-        $pool->on('workerStart', function (\Swoole\Process\Pool $pool, int $workerId) {
-            echo "Worker#{$workerId} is started\n";
+            echo "Squeue is started\n";
+
             while (true) {
                 DelayBucket::scan(static::$driver);
             }
-        });
 
-        $pool->on('workerStop', function (\Swoole\Process\Pool $pool, int $workerId) {
-            echo "Worker#{$workerId} is stop\n";
-        });
+        }, false, 0, true);
 
-        $pool->start();
+        $process->start();
+
+        \Swoole\Process::wait(true);
+
+        echo "Squeue exit" . PHP_EOL;
+
     }
 
     /**
@@ -70,6 +72,12 @@ class Queue
         return JobPool::delJob(static::$driver, $jobId);
     }
 
+    /**
+     * @param $topic
+     * @throws \Exception
+     * @author wuzhengyu
+     * @date 2020/5/14 0014 下午 2:39
+     */
     public function pop($topic)
     {
         ReadyQueue::pop(static::$driver, $topic);
@@ -90,5 +98,19 @@ class Queue
         }
 
         return $jobId;
+    }
+
+    /**
+     * @param array $params
+     * @author wuzhengyu
+     * @date 2020/5/15 0015 下午 3:04
+     */
+    public function set(array $params)
+    {
+        foreach ($params as $key => $val) {
+            if (isset(Config::$$key)) {
+                Config::$$key = $val;
+            }
+        }
     }
 }

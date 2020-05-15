@@ -81,23 +81,12 @@ class JobPool
     }
 
     /**
-     * @param $topic
-     * @return string
-     * @author wuzhengyu
-     * @date 2020/5/13 0013 下午 3:45
-     */
-    private static function getJobPoolKeyByTopic($topic)
-    {
-        return self::JOB_POOL_KEY_PREFIX . $topic;
-    }
-
-    /**
      * @param $id
      * @return mixed|null
      * @author wuzhengyu
      * @date 2020/5/13 0013 下午 4:23
      */
-    private static function getTopicByJobId($id)
+    public static function getTopicByJobId($id)
     {
         if (strpos($id, '_') === false || strlen($id) < 3) {
             return null;
@@ -106,6 +95,17 @@ class JobPool
         $topic = explode('_', $id)[0];
 
         return $topic ?? null;
+    }
+
+    /**
+     * @param $topic
+     * @return string
+     * @author wuzhengyu
+     * @date 2020/5/13 0013 下午 3:45
+     */
+    private static function getJobPoolKeyByTopic($topic)
+    {
+        return self::JOB_POOL_KEY_PREFIX . $topic;
     }
 
 
