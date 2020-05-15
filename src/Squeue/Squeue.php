@@ -74,9 +74,10 @@ class Squeue
 
     /**
      * @param $topic
+     * @return mixed|null
      * @throws \Exception
      * @author wuzhengyu
-     * @date 2020/5/14 0014 下午 2:39
+     * @date 2020/5/15 0015 下午 5:51
      */
     public function pop($topic)
     {
