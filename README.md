@@ -63,6 +63,8 @@ while (true) {
     
     // 任务执行完毕后 调用finish 告知 squeue 队列被正常消费，否则squeue将根据add设置的TTR（默认60秒）的时间间隔重试，直到消息被正常应答
     $mq->finish($job->jobId);
+    
+    usleep(1000);
 }
 
 ```
